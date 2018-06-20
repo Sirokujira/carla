@@ -17,10 +17,10 @@ environment:
     # VCPKG_x64_SHARED_ROOT: C:/tools/vcpkg/installed/x64-windows
     BOOST_LIBRARYDIR: C:\Libraries\boost_1_64_0\lib64-msvc-14.1
     CONFIGURATION: Release
-    TEST1: "Pylint"
-    TEST2: "CppCheck"
-    TEST3: "MkDocs"
-    # TEST4: "AwesomeBot"
+    TEST1: Pylint
+    TEST2: CppCheck
+    TEST3: MkDocs
+    # TEST4: AwesomeBot
 
 
 install:

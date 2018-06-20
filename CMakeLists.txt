@@ -15,12 +15,6 @@ set(MY_CMAKE_FOLDER ${CMAKE_SOURCE_DIR}/Util/cmake)
 # LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 if (WIN32)
-# set(CMAKE_C_COMPILER:FILEPATH "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/amd64/cl.exe")
-# set(CMAKE_CXX_COMPILER:FILEPATH "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/amd64/cl.exe")
-# # Flags used by the linker.
-set(CMAKE_EXE_LINKER_FLAGS "/machine:x64")
-# # Path to a program.
-# set(CMAKE_LINKER:FILEPATH "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/amd64/link.exe")
 # set(PROTOC_COMPILE "cd Util & call Protoc.bat & exit")
 # set(PROTOC_CLEAN "cd Util & call Protoc.bat --clean & exit")
 else (WIN32)
@@ -57,7 +51,9 @@ endif (WIN32)
 
 add_custom_target(protobuf
     DEPENDS build
-    COMMAND cmd.exe /k $(PROTOC_COMPILE)
+    # Win32
+    # COMMAND cmd.exe /k $(PROTOC_COMPILE)
+    COMMAND $(PROTOC_COMPILE)
 )
 
 ### Docs #######################################################################
@@ -103,8 +99,8 @@ ENDIF(DOXYGEN_FOUND)
 #   -@rd /s /q "$(BASE_BUILD_FOLDER)" "$(INSTALL_FOLDER)" Doxygen 2>nul
 # add_custom_target(clean
 #     # Win32
-#     COMMAND cmd.exe /k @$(PROTOC_CLEAN)
-#     COMMAND @$(PROTOC_CLEAN)
+#     # COMMAND cmd.exe /k @$(PROTOC_CLEAN)
+#     COMMAND $(PROTOC_CLEAN)
 #     COMMAND ${CMAKE_COMMAND} -E REMOVE_RECURSE BASE_BUILD_FOLDER
 #     COMMAND ${CMAKE_COMMAND} -E REMOVE_RECURSE ${INSTALL_FOLDER}
 #     COMMAND ${CMAKE_COMMAND} -E REMOVE_RECURSE Doxygen
