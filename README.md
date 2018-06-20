@@ -5,6 +5,8 @@ CARLA Simulator
 [![Documentation](https://readthedocs.org/projects/carla/badge/?version=latest)](http://carla.readthedocs.io)
 [![Waffle.io](https://badge.waffle.io/carla-simulator/carla.svg?columns=Next,In%20Progress,Review)](https://waffle.io/carla-simulator/carla)
 
+### Carla is hiring! [Software Engineer](http://www.cvc.uab.es/?p=3853)
+
 [![carla.org](Docs/img/btn/web.png)](http://carla.org)
 [![download](Docs/img/btn/download.png)](https://github.com/carla-simulator/carla/releases/latest)
 [![documentation](Docs/img/btn/docs.png)](http://carla.readthedocs.io)
@@ -24,14 +26,6 @@ environmental conditions.
 If you want to benchmark your model in the same conditions as in our CoRL’17
 paper, check out
 [Benchmarking](http://carla.readthedocs.io/en/latest/benchmark_start/).
-
-News
-----
-
-- 23.04.2018 CARLA 0.8.2 released: [post](http://carla.org/2018/04/23/release-0.8.2/), [change log](https://github.com/carla-simulator/carla/blob/master/CHANGELOG.md#carla-082), [release](https://github.com/carla-simulator/carla/releases/tag/0.8.2).
-- 05.04.2018 CARLA 0.8.1 released: [post](http://carla.org/2018/04/05/release-0.8.1/), [change log](https://github.com/carla-simulator/carla/blob/master/CHANGELOG.md#carla-081), [release](https://github.com/carla-simulator/carla/releases/tag/0.8.1).
-- 27.03.2018 CARLA 0.8.0 released: [post](http://carla.org/2018/03/27/release-0.8.0/), [change log](https://github.com/carla-simulator/carla/blob/master/CHANGELOG.md#carla-080), [release](https://github.com/carla-simulator/carla/releases/tag/0.8.0).
-- 25.01.2018 CARLA 0.7.1 released: [change log](https://github.com/carla-simulator/carla/blob/master/CHANGELOG.md#carla-071), [release](https://github.com/carla-simulator/carla/releases/tag/0.7.1).
 
 Roadmap
 -------
@@ -71,13 +65,14 @@ Use `git clone` or download the project from this page. Note that the master
 branch contains the latest fixes and features, for the latest stable code may be
 best to switch to the latest release tag.
 
-Then follow the instruction at [How to build on Linux][buildlink].
+Then follow the instruction at [How to build on Linux][buildlinuxlink] or
+[How to build on Windows][buildwindowslink].
 
-Unfortunately we don't have yet official instructions to build on other
-platforms, please check the progress for [Windows][issue21] and [Mac][issue150].
+Unfortunately we don't have official instructions to build on Mac yet, please
+check the progress at [issue #150][issue150].
 
-[buildlink]: http://carla.readthedocs.io/en/latest/how_to_build_on_linux
-[issue21]: https://github.com/carla-simulator/carla/issues/21
+[buildlinuxlink]: http://carla.readthedocs.io/en/latest/how_to_build_on_linux
+[buildwindowslink]: http://carla.readthedocs.io/en/latest/how_to_build_on_windows
 [issue150]: https://github.com/carla-simulator/carla/issues/150
 
 Contributing
