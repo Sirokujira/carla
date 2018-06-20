@@ -1,11 +1,13 @@
 os:
 - Windows Server 2012 R2
 
+version: 0.8.4.{build}
+
 branches:
   only:
     - master
 
-cache: c:\tools\vcpkg\installed\
+# cache: c:\tools\vcpkg\installed\
 
 environment:
   matrix:
@@ -25,19 +27,17 @@ environment:
 
 
 install:
-  - if [%TEST1%]==["Pylint"] pip install -r PythonClient/requirements.txt
-  - if [%TEST1%]==["Pylint"] pip install pylint
-  - if [%TEST3%]==["MkDocs"] pip install mkdocs
-  - if [%TEST4%]==["AwesomeBot"] gem install awesome_bot
+  - cmd: if [%TEST1%]==["Pylint"] pip install -r PythonClient/requirements.txt
+  - cmd: if [%TEST1%]==["Pylint"] pip install pylint
+  - cmd: if [%TEST3%]==["MkDocs"] pip install mkdocs
+  - cmd: if [%TEST4%]==["AwesomeBot"] gem install awesome_bot
+
+
 script:
-  - if [%TEST1%]==["Pylint"] pylint --disable=R,C --rcfile=PythonClient/.pylintrc PythonClient/carla PythonClient/*.py
-  - if [%TEST2%]==["CppCheck"] cppcheck . -iBuild -i.pb.cc --error-exitcode=1 --enable=warning --inline-suppr --quiet
-  - if [%TEST3%]==["MkDocs"] mkdocs build --verbose --clean --strict --site-dir _site
-  - if [%TEST3%]==["AwesomeBot"] find . -name '*.md' | xargs awesome_bot --allow-dupe --allow-redirect --skip-save-results
-
-
-matrix:
-  include:
+  - cmd: if [%TEST1%]==["Pylint"] pylint --disable=R,C --rcfile=PythonClient/.pylintrc PythonClient/carla PythonClient/*.py
+  - cmd: if [%TEST2%]==["CppCheck"] cppcheck . -iBuild -i.pb.cc --error-exitcode=1 --enable=warning --inline-suppr --quiet
+  - cmd: if [%TEST3%]==["MkDocs"] mkdocs build --verbose --clean --strict --site-dir _site
+  - cmd: if [%TEST4%]==["AwesomeBot"] find . -name '*.md' | xargs awesome_bot --allow-dupe --allow-redirect --skip-save-results
 
 
 before_build:
