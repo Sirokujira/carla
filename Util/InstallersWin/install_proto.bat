@@ -43,7 +43,7 @@ if not exist "%P_SRC_DIR%" (
 	echo %FILE_N% Cloning Protobuf - version "%P_VERSION%"...
 	echo.
 	call git clone --depth=1 -b %P_VERSION%^
-		--recurse-submodules^
+		--recurse-submodules -j8^
 		https://github.com/google/protobuf.git %P_SRC_DIR%
 	if errorlevel 1 goto error_git
 	echo.
