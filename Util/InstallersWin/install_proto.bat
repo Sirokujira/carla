@@ -72,8 +72,8 @@ cmake -G "NMake Makefiles"^
 if errorlevel 1 goto error_cmake
 
 echo %FILE_N% Building...
-rem nmake & nmake install
-cmake --build . --config Release --target install
+nmake & nmake install
+rem cmake --build . --config Release --target install
 
 if errorlevel 1 goto error_install
 
