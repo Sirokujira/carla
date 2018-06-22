@@ -4,56 +4,32 @@ project(Carla)
 
 # set(CMAKE_VERBOSE_MAKEFILE 1)  # debug helper
 
-message(${CMAKE_SOURCE_DIR})
-set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/Unreal/CarlaUE4/Plugins/Carla/CarlaServer)
+# message(${CMAKE_SOURCE_DIR})
+set(INSTALL_FOLDER ${CMAKE_SOURCE_DIR}/Unreal/CarlaUE4/Plugins/Carla/CarlaServer)
+set(CMAKE_INSTALL_PREFIX ${INSTALL_FOLDER})
 set(PYTHON_CLIENT_FOLDER ${CMAKE_SOURCE_DIR}/PythonClient/test)
 set(BASE_BUILD_FOLDER ${CMAKE_SOURCE_DIR}/Util/Build/carlaserver-build)
 set(MY_CMAKE_FOLDER ${CMAKE_SOURCE_DIR}/Util/cmake)
 # set(MY_CMAKE_FLAGS -B"$(BUILD_FOLDER)")
 
-# Add custom
-# LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
 if (WIN32)
-# set(PROTOC_COMPILE "cd Util & call Protoc.bat & exit")
-# set(PROTOC_CLEAN "cd Util & call Protoc.bat --clean & exit")
+set(PROTOC_WIN32_COMMAND "cmd.exe" CACHE STRING command)
+set(PROTOC_COMPILE " /k \"cd ${CMAKE_SOURCE_DIR} & cd Util & call Protoc.bat & exit\"" CACHE STRING command)
+set(PROTOC_CLEAN " /k \"cd Util & call Protoc.bat --clean & exit\"" CACHE STRING command)
+message(${PROTOC_WIN32_COMMAND})
+message(${PROTOC_COMPILE})
 else (WIN32)
+set(PROTOC_WIN32_COMMAND "")
 set(PROTOC_COMPILE "./Util/Protoc.sh")
 set(PROTOC_CLEAN "./Util/Protoc.sh --clean")
 endif (WIN32)
 
 ### Build ######################################################################
 
-# build_linux: MY_CMAKE_FLAGS+=-G "Ninja"
-# build_linux: call_cmake
-#     @cd $(BUILD_FOLDER) && ninja && ninja install
-# mkdir build && cd build
-# cmake -G "Ninja" ..
-# cmake --build . --config Release --target install
-
-# build_windows: MY_CMAKE_FLAGS+=-G "NMake Makefiles"
-# build_windows: call_cmake
-#     @cd $(BUILD_FOLDER) && nmake && nmake install
-# mkdir build && cd build
-# cmake -G "NMake Makefiles" ..
-# cmake -G "Visual Studio 15 2017 Win64" ..
-# cmake --build . --config Release --target install
-
-# cmake -G "NMake Makefiles" . ^
-#   -DCMAKE_CXX_FLAGS_RELEASE=/MD ^
-#   -DCMAKE_INSTALL_PREFIX="%local_path%\%PROTO_INSTALL%" ^
-#   %local_path%\%PROTO_SRC%\cmake
-
-
-# call_cmake: protobuf $(CALL_CMAKE_RULE)
-#     file(MAKE_DIRECTORY $(BUILD_FOLDER))
-#     @cd $(BUILD_FOLDER) && cmake $(MY_CMAKE_FLAGS) "$(MY_CMAKE_FOLDER)"
-
 add_custom_target(protobuf
     DEPENDS build
-    # Win32
-    # COMMAND cmd.exe /k $(PROTOC_COMPILE)
-    COMMAND $(PROTOC_COMPILE)
+    COMMAND ${PROTOC_WIN32_COMMAND}
+    ARGS ${PROTOC_COMPILE}
 )
 
 ### Docs #######################################################################
