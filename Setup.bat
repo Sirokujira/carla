@@ -36,8 +36,8 @@ echo Asynchronous jobs:  %NUMBER_OF_ASYNC_JOBS%
 echo Boost toolset:      %TOOLSET%
 echo Install directory:  %INSTALLATION_DIR%
 
-if [%TOOLSET%] == [msvc-14.1] set CMAKE_GENERATOR="Visual Studio 15 2017 Win64"
-if [%TOOLSET%] == [msvc-14.0] set CMAKE_GENERATOR="Visual Studio 14 2015 Win64"
+rem if [%TOOLSET%] == [msvc-14.1] set CMAKE_GENERATOR="Visual Studio 15 2017 Win64"
+rem if [%TOOLSET%] == [msvc-14.0] set CMAKE_GENERATOR="Visual Studio 14 2015 Win64"
 rem if [%TOOLSET%] == [msvc-12.0] set CMAKE_GENERATOR="Visual Studio 12 2013 Win64"
 
 if not exist "%CONTENT_DIR%" (
@@ -50,7 +50,6 @@ echo  Installing Protobuf...
 call %INSTALLERS_DIR%install_proto.bat ^
 	--build-dir %INSTALLATION_DIR% ^
 	-j %NUMBER_OF_ASYNC_JOBS%
-	--build-msvc %CMAKE_GENERATOR%
 
 if not defined install_proto (
 	echo.

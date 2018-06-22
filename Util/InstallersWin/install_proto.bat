@@ -17,10 +17,6 @@ if not "%1"=="" (
         set BUILD_DIR=%2
         shift
     )
-    if "%1"=="--build-msvc" (
-        set CMAKE_GENERATOR=%3
-        shift
-    )
     shift
     goto :arg-parse
 )
@@ -65,8 +61,8 @@ if not exist "%P_SRC_DIR%\cmake\build" (
 cd %P_SRC_DIR%\cmake\build
 
 echo %FILE_N% Generating build...
-rem cmake -G "NMake Makefiles" ^
-cmake -G "%CMAKE_GENERATOR%" ^
+rem cmake -G "%CMAKE_GENERATOR%" ^
+cmake -G "NMake Makefiles" ^
 	-DCMAKE_BUILD_TYPE=Release ^
 	-Dprotobuf_BUILD_TESTS=OFF ^
 	-DCMAKE_CXX_FLAGS_RELEASE=/MD ^
