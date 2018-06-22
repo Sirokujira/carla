@@ -6,6 +6,9 @@ $BASE_CPPCHECK_URL = "https://github.com/danmar/cppcheck/releases/download"
 
 function Download ($filename, $url) 
 {
+    # TLS 1.2 valid(use Github)
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12;
+
     $webclient = New-Object System.Net.WebClient
 
     $basedir = $pwd.Path + "\"
