@@ -52,7 +52,7 @@ build_script:
   - cmd: cd PythonClient
   - cmd: if [%TEST1%]==[Pylint] forfiles /s /m *.py /c "cmd /c pylint --disable=R,C --rcfile=.pylintrc @path"
   - cmd: cd ..
-  - cmd: if [%TEST2%]==[CppCheck] %CPPCHECK_ROOT%\cppcheck.exe . -iBuild -i.pb.cc --error-exitcode=1 --enable=warning --inline-suppr --quiet
+  - cmd: if [%TEST2%]==[CppCheck] "%CPPCHECK_ROOT%\cppcheck.exe" . -iBuild -i.pb.cc --error-exitcode=1 --enable=warning --inline-suppr --quiet
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
   - cmd: if [%TEST3%]==[MkDocs] mkdocs build --verbose --clean --strict --site-dir _site
   - cmd: if [%TEST4%]==[AwesomeBot] find . -name '*.md' | xargs awesome_bot --allow-dupe --allow-redirect --skip-save-results
