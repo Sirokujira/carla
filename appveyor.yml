@@ -12,8 +12,27 @@ environment:
     # PYTHON_ARCH: "64"
     CMAKE_GENERATOR: Visual Studio 15 2017 Win64
     CONFIGURATION: Release
+    SETUP_BAT_TOOLSET: msvc-14.1
+    CPPCHECK_VERSION: 1.8.3
+    # CPPCHECK_ROOT: %APPVEYOR_BUILD_FOLDER%
+    CPPCHECK_ROOT: C:\projects\carla
     TEST1: Pylint
     TEST2: CppCheck
+    TEST3: MkDocs
+    # TEST4: AwesomeBot
+
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    # PYTHON: "C:\\Miniconda36-x64"
+    # PYTHON_VERSION: "3.6"
+    # PYTHON_ARCH: "64"
+    CMAKE_GENERATOR: Visual Studio 14 2015 Win64
+    CONFIGURATION: Release
+    SETUP_BAT_TOOLSET: msvc-14.0
+    CPPCHECK_VERSION: 1.8.3
+    # CPPCHECK_ROOT: %APPVEYOR_BUILD_FOLDER%
+    CPPCHECK_ROOT: C:\projects\carla
+    TEST1: Pylint
+    # TEST2: CppCheck
     TEST3: MkDocs
     # TEST4: AwesomeBot
 
@@ -21,9 +40,10 @@ environment:
 install:
   - cmd: if [%TEST1%]==[Pylint] pip install -r PythonClient/requirements.txt
   - cmd: if [%TEST1%]==[Pylint] pip install pylint
+  - cmd: if [%TEST2%]==[CppCheck] powershell appveyor\install.ps1
   - cmd: if [%TEST3%]==[MkDocs] pip install mkdocs
   - cmd: if [%TEST4%]==[AwesomeBot] gem install awesome_bot
-  - cmd: Setup.bat -j 8 --boost-toolset msvc-14.1
+  - cmd: Setup.bat -j 8 --boost-toolset %SETUP_BAT_TOOLSET%
   - cmd: cd Util
   - cmd: Protoc.bat
 
@@ -31,7 +51,7 @@ install:
 build_script:
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
   - cmd: cd PythonClient
-  # - cmd: if [%TEST1%]==[Pylint] forfiles /s /m *.py /c "cmd /c pylint --disable=R,C --rcfile=.pylintrc @relpath"
+# - cmd: if [%TEST1%]==[Pylint] forfiles /s /m *.py /c "cmd /c pylint --disable=R,C --rcfile=.pylintrc @relpath"
   - cmd: if [%TEST1%]==[Pylint] forfiles /s /m *.py /c "cmd /c pylint --disable=R,C --rcfile=.pylintrc @path"
   - cmd: cd ..
   - cmd: if [%TEST2%]==[CppCheck] cppcheck . -iBuild -i.pb.cc --error-exitcode=1 --enable=warning --inline-suppr --quiet
