@@ -42,11 +42,11 @@ if exist "%B_INSTALL_DIR%" (
 	goto already_build
 )
 
+rem old git replace under command(-u option not founf check version 2.7.0)
+rem --recurse-submodules^
 if not exist "%B_SRC_DIR%" (
 	echo %FILE_N% Cloning Boost - version "%B_VERSION%"...
 	echo.
-	rem old git replace under command(-u option not founf check version 2.7.0)
-	rem --recurse-submodules^
 	call git clone --depth=1 -b %B_VERSION%^
 		--recurse-submodules -j8^
 		https://github.com/boostorg/boost.git %B_SRC_DIR%
