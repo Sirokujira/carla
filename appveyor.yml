@@ -14,10 +14,9 @@ environment:
     CONFIGURATION: Release
     SETUP_BAT_TOOLSET: msvc-14.1
     CPPCHECK_VERSION: 1.8.3
-    # CPPCHECK_ROOT: %APPVEYOR_BUILD_FOLDER%
     CPPCHECK_ROOT: "C:\\projects\\carla"
     TEST1: Pylint
-    # TEST2: CppCheck
+    TEST2: CppCheck
     TEST3: MkDocs
     # TEST4: AwesomeBot
 
