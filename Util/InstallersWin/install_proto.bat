@@ -21,7 +21,6 @@ if not "%1"=="" (
     goto :arg-parse
 )
 
-if [%CMAKE_GENERATOR%] == [] set CMAKE_GENERATOR="NMake Makefiles"
 if [%BUILD_DIR%] == [] set BUILD_DIR=.
 if [%NUMBER_OF_ASYNC_JOBS%] == [] set NUMBER_OF_ASYNC_JOBS=1
 
