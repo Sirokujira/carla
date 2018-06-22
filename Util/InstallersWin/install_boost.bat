@@ -47,6 +47,8 @@ if not exist "%B_SRC_DIR%" (
 	echo.
 	call git clone --depth=1 -b %B_VERSION%^
 		--recurse-submodules -j8^
+		rem old git(-u option not founf check version 2.7.0)
+		rem --recurse-submodules^
 		https://github.com/boostorg/boost.git %B_SRC_DIR%
 	if errorlevel 1 goto error_git
 	echo.
