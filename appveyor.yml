@@ -17,24 +17,24 @@ environment:
     # CPPCHECK_ROOT: %APPVEYOR_BUILD_FOLDER%
     CPPCHECK_ROOT: C:\projects\carla
     TEST1: Pylint
-    TEST2: CppCheck
-    TEST3: MkDocs
-    # TEST4: AwesomeBot
-
-  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    # PYTHON: "C:\\Miniconda36-x64"
-    # PYTHON_VERSION: "3.6"
-    # PYTHON_ARCH: "64"
-    CMAKE_GENERATOR: Visual Studio 14 2015 Win64
-    CONFIGURATION: Release
-    SETUP_BAT_TOOLSET: msvc-14.0
-    CPPCHECK_VERSION: 1.8.3
-    # CPPCHECK_ROOT: %APPVEYOR_BUILD_FOLDER%
-    CPPCHECK_ROOT: C:\projects\carla
-    TEST1: Pylint
     # TEST2: CppCheck
     TEST3: MkDocs
     # TEST4: AwesomeBot
+
+  # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+  #   # PYTHON: "C:\\Miniconda36-x64"
+  #   # PYTHON_VERSION: "3.6"
+  #   # PYTHON_ARCH: "64"
+  #   CMAKE_GENERATOR: Visual Studio 14 2015 Win64
+  #   CONFIGURATION: Release
+  #   SETUP_BAT_TOOLSET: msvc-14.0
+  #   CPPCHECK_VERSION: 1.8.3
+  #   # CPPCHECK_ROOT: %APPVEYOR_BUILD_FOLDER%
+  #   CPPCHECK_ROOT: C:\projects\carla
+  #   TEST1: Pylint
+  #   # TEST2: CppCheck
+  #   TEST3: MkDocs
+  #   # TEST4: AwesomeBot
 
 
 install:
@@ -43,7 +43,8 @@ install:
   - cmd: if [%TEST2%]==[CppCheck] powershell -NoProfile -ExecutionPolicy Unrestricted appveyor\install.ps1
   - cmd: if [%TEST3%]==[MkDocs] pip install mkdocs
   - cmd: if [%TEST4%]==[AwesomeBot] gem install awesome_bot
-  - cmd: Setup.bat -j 8 --boost-toolset "%SETUP_BAT_TOOLSET%"
+  # - cmd: Setup.bat -j 8 --boost-toolset %SETUP_BAT_TOOLSET%
+  - cmd: Setup.bat -j 8 --boost-toolset msvc-14.1
   - cmd: cd Util
   - cmd: Protoc.bat
 
