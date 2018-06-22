@@ -4,8 +4,6 @@ branches:
   only:
     - master
 
-# cache: c:\tools\vcpkg\installed\
-
 environment:
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
@@ -13,9 +11,6 @@ environment:
     # PYTHON_VERSION: "3.6"
     # PYTHON_ARCH: "64"
     CMAKE_GENERATOR: Visual Studio 15 2017 Win64
-    # VCPKG_DEFAULT_TRIPLET: x64-windows
-    # VCPKG_x64_SHARED_ROOT: C:/tools/vcpkg/installed/x64-windows
-    BOOST_LIBRARYDIR: C:\Libraries\boost_1_64_0\lib64-msvc-14.1
     CONFIGURATION: Release
     TEST1: Pylint
     TEST2: CppCheck
@@ -35,7 +30,10 @@ install:
 
 build_script:
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
-  - cmd: if [%TEST1%]==[Pylint] pylint --disable=R,C --rcfile=PythonClient/.pylintrc PythonClient/carla PythonClient/*.py
+  # - cmd: if [%TEST1%]==[Pylint] pylint --disable=R,C --rcfile=PythonClient/.pylintrc PythonClient/carla PythonClient/*.py
+  - cmd: cd PythonClient
+  - cmd: if [%TEST1%]==[Pylint] pylint --disable=R,C --rcfile=.pylintrc carla *.py
+  - cmd: cd ..
   - cmd: if [%TEST2%]==[CppCheck] cppcheck . -iBuild -i.pb.cc --error-exitcode=1 --enable=warning --inline-suppr --quiet
   - cmd: if [%TEST3%]==[MkDocs] mkdocs build --verbose --clean --strict --site-dir _site
   - cmd: if [%TEST4%]==[AwesomeBot] find . -name '*.md' | xargs awesome_bot --allow-dupe --allow-redirect --skip-save-results
