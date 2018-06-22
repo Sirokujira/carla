@@ -30,9 +30,9 @@ install:
 
 build_script:
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
-  # - cmd: if [%TEST1%]==[Pylint] pylint --disable=R,C --rcfile=PythonClient/.pylintrc PythonClient/carla PythonClient/*.py
   - cmd: cd PythonClient
-  - cmd: if [%TEST1%]==[Pylint] pylint --disable=R,C --rcfile=.pylintrc carla *.py
+  # - cmd: if [%TEST1%]==[Pylint] forfiles /s /m *.py /c "cmd /c pylint --disable=R,C --rcfile=.pylintrc @relpath"
+  - cmd: if [%TEST1%]==[Pylint] forfiles /s /m *.py /c "cmd /c pylint --disable=R,C --rcfile=.pylintrc @path"
   - cmd: cd ..
   - cmd: if [%TEST2%]==[CppCheck] cppcheck . -iBuild -i.pb.cc --error-exitcode=1 --enable=warning --inline-suppr --quiet
   - cmd: if [%TEST3%]==[MkDocs] mkdocs build --verbose --clean --strict --site-dir _site
