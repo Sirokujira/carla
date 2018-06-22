@@ -36,10 +36,6 @@ echo Asynchronous jobs:  %NUMBER_OF_ASYNC_JOBS%
 echo Boost toolset:      %TOOLSET%
 echo Install directory:  %INSTALLATION_DIR%
 
-rem if [%TOOLSET%] == [msvc-14.1] set CMAKE_GENERATOR="Visual Studio 15 2017 Win64"
-rem if [%TOOLSET%] == [msvc-14.0] set CMAKE_GENERATOR="Visual Studio 14 2015 Win64"
-rem if [%TOOLSET%] == [msvc-12.0] set CMAKE_GENERATOR="Visual Studio 12 2013 Win64"
-
 if not exist "%CONTENT_DIR%" (
 	echo Creating %CONTENT_DIR% folder...
 	mkdir %CONTENT_DIR%
