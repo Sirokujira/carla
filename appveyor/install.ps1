@@ -85,16 +85,26 @@ function InstallCppCheck ($cppcheck_version, $cppcheck_root)
 }
 
 
+function InstallCppCheckMSI ($msipath, $install_log)
+{
+    RunCommand "schtasks" "/create /tn checkcpp_install /RL HIGHEST /tr `"msiexec.exe /i $msipath $install_args`" /sc once /st 23:59"
+    RunCommand "sleep" "10"
+    RunCommand "schtasks" "/run /tn checkcpp_install"
+    RunCommand "sleep" "180"
+    RunCommand "schtasks" "/delete /tn checkcpp_install_install /f"
+}
+
+
 function InstallCppCheckEXE ($exepath, $install_log)
 {
     # http://www.ibm.com/support/knowledgecenter/SS2RWS_2.1.0/com.ibm.zsecure.doc_2.1/visual_client/responseexamples.html?lang=ja
     $install_args = "/S /v/qn /v/norestart"
 
-    RunCommand "schtasks" "/create /tn openni_install /RL HIGHEST /tr `"$exepath $install_args`" /sc once /st 23:59"
+    RunCommand "schtasks" "/create /tn checkcpp_install /RL HIGHEST /tr `"$exepath $install_args`" /sc once /st 23:59"
     RunCommand "sleep" "10"
-    RunCommand "schtasks" "/run /tn openni_install"
+    RunCommand "schtasks" "/run /tn checkcpp_install"
     RunCommand "sleep" "90"
-    RunCommand "schtasks" "/delete /tn openni_install /f"
+    RunCommand "schtasks" "/delete /tn checkcpp_install /f"
 }
 
 function main ()
