@@ -21,6 +21,7 @@ if not "%1"=="" (
     goto :arg-parse
 )
 
+if [%CMAKE_GENERATOR%] == [] set CMAKE_GENERATOR="NMake Makefiles"
 if [%BUILD_DIR%] == [] set BUILD_DIR=.
 if [%NUMBER_OF_ASYNC_JOBS%] == [] set NUMBER_OF_ASYNC_JOBS=1
 
@@ -43,7 +44,7 @@ if not exist "%P_SRC_DIR%" (
 	echo %FILE_N% Cloning Protobuf - version "%P_VERSION%"...
 	echo.
 	call git clone --depth=1 -b %P_VERSION%^
-		--recurse-submodules -j8^
+		--recurse-submodules^
 		https://github.com/google/protobuf.git %P_SRC_DIR%
 	if errorlevel 1 goto error_git
 	echo.
@@ -60,20 +61,20 @@ if not exist "%P_SRC_DIR%\cmake\build" (
 cd %P_SRC_DIR%\cmake\build
 
 echo %FILE_N% Generating build...
-rem cmake -G "NMake Makefiles"^
-cmake -G "Visual Studio 15 2017 Win64" ^
-	-DCMAKE_BUILD_TYPE=Release ^
-	-Dprotobuf_BUILD_TESTS=OFF ^
-	-DCMAKE_CXX_FLAGS_RELEASE=/MD ^
-	-Dprotobuf_MSVC_STATIC_RUNTIME=OFF ^
-	-DCMAKE_INSTALL_PREFIX=%P_INSTALL_DIR% ^
+rem cmake -G "%CMAKE_GENERATOR%"^
+cmake -G "NMake Makefiles"^
+	-DCMAKE_BUILD_TYPE=Release^
+	-Dprotobuf_BUILD_TESTS=OFF^
+	-DCMAKE_CXX_FLAGS_RELEASE=/MD^
+	-Dprotobuf_MSVC_STATIC_RUNTIME=OFF^
+	-DCMAKE_INSTALL_PREFIX=%P_INSTALL_DIR%^
 	%P_SRC_DIR%\cmake
 
 if errorlevel 1 goto error_cmake
 
 echo %FILE_N% Building...
-rem nmake & nmake install
-cmake --build . --config Release --target install
+nmake & nmake install
+rem cmake --build . --config Release --target install
 
 if errorlevel 1 goto error_install
 
