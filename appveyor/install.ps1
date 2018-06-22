@@ -53,7 +53,7 @@ function InstallCppCheck ($cppcheck_version, $cppcheck_root)
 {
     $platform_suffix = "x64"
 
-    $installer_filename = "cppcheck-"  + "$cppcheck_version" + "-" + "$platform_suffix" + ".msi"
+    $installer_filename = "cppcheck-" + "$cppcheck_version" + "-" + "$platform_suffix" + "-Setup.msi"
     $url = "$BASE_CPPCHECK_URL" + "/$cppcheck_version" + "/" + "$installer_filename"
     $filepath = Download $installer_filename $url
 
