@@ -17,10 +17,15 @@ if not "%1"=="" (
         set BUILD_DIR=%2
         shift
     )
+    if "%1"=="--build-msvc" (
+        set CMAKE_GENERATOR=%3
+        shift
+    )
     shift
     goto :arg-parse
 )
 
+if [%CMAKE_GENERATOR%] == [] set CMAKE_GENERATOR="NMake Makefiles"
 if [%BUILD_DIR%] == [] set BUILD_DIR=.
 if [%NUMBER_OF_ASYNC_JOBS%] == [] set NUMBER_OF_ASYNC_JOBS=1
 
@@ -60,13 +65,13 @@ if not exist "%P_SRC_DIR%\cmake\build" (
 cd %P_SRC_DIR%\cmake\build
 
 echo %FILE_N% Generating build...
-rem cmake -G "Visual Studio 15 2017 Win64"^
-cmake -G "NMake Makefiles"^
-	-DCMAKE_BUILD_TYPE=Release^
-	-Dprotobuf_BUILD_TESTS=OFF^
-	-DCMAKE_CXX_FLAGS_RELEASE=/MD^
-	-Dprotobuf_MSVC_STATIC_RUNTIME=OFF^
-	-DCMAKE_INSTALL_PREFIX=%P_INSTALL_DIR%^
+rem cmake -G "NMake Makefiles" ^
+cmake -G "%CMAKE_GENERATOR%" ^
+	-DCMAKE_BUILD_TYPE=Release ^
+	-Dprotobuf_BUILD_TESTS=OFF ^
+	-DCMAKE_CXX_FLAGS_RELEASE=/MD ^
+	-Dprotobuf_MSVC_STATIC_RUNTIME=OFF ^
+	-DCMAKE_INSTALL_PREFIX=%P_INSTALL_DIR% ^
 	%P_SRC_DIR%\cmake
 
 if errorlevel 1 goto error_cmake

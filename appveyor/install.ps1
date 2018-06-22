@@ -55,7 +55,7 @@ function InstallCppCheck ($cppcheck_version, $cppcheck_root)
 
     $installer_filename = "cppcheck-"  + "$cppcheck_version" + "-" + "$platform_suffix" + ".msi"
     $url = "$BASE_CPPCHECK_URL" + "/$cppcheck_version" + "/" + "$installer_filename"
-    $filepath = Download $filename $url
+    $filepath = Download $installer_filename $url
 
     $installer_path = $cppcheck_root + "\" + $installer_filename
     $current_dir =  [System.IO.Directory]::GetCurrentDirectory()
