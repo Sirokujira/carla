@@ -60,8 +60,8 @@ if not exist "%P_SRC_DIR%\cmake\build" (
 cd %P_SRC_DIR%\cmake\build
 
 echo %FILE_N% Generating build...
-rem cmake -G "NMake Makefiles"^
-cmake -G "Visual Studio 15 2017 Win64"^
+rem cmake -G "Visual Studio 15 2017 Win64"^
+cmake -G "NMake Makefiles"^
 	-DCMAKE_BUILD_TYPE=Release^
 	-Dprotobuf_BUILD_TESTS=OFF^
 	-DCMAKE_CXX_FLAGS_RELEASE=/MD^
