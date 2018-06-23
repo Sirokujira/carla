@@ -60,7 +60,7 @@ function InstallCppCheck ($cppcheck_version, $cppcheck_root)
     $url = "$BASE_CPPCHECK_URL" + "/$cppcheck_version" + "/" + "$installer_filename"
     $filepath = Download $installer_filename $url
 
-    $installer_path = $cppcheck_root + "\" + $installer_filename
+    $installer_path = $cppcheck_root + "/" + $installer_filename
     $current_dir =  [System.IO.Directory]::GetCurrentDirectory()
     Copy-Item $installer_path $current_dir
 
@@ -90,6 +90,8 @@ function InstallCppCheck ($cppcheck_version, $cppcheck_root)
 
 function InstallCppCheckMSI ($msipath, $install_log)
 {
+    $install_args = "/qn /norestart"
+
     RunCommand "schtasks" "/create /tn checkcpp_install /RL HIGHEST /tr `"msiexec.exe /i $msipath $install_args`" /sc once /st 23:59"
     RunCommand "sleep" "10"
     RunCommand "schtasks" "/run /tn checkcpp_install"
