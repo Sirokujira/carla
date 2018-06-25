@@ -14,7 +14,8 @@ environment:
     CONFIGURATION: Release
     SETUP_BAT_TOOLSET: msvc-14.1
     CPPCHECK_VERSION: 1.83
-    CPPCHECK_ROOT: "C:\\Program Files\\Cppcheck"
+    # CPPCHECK_ROOT: "C:\\Program Files\\Cppcheck"
+    CPPCHECK_ROOT: "C:\\Program Files (x86)\\Cppcheck"
     TEST1: Pylint
     TEST2: CppCheck
     TEST3: MkDocs

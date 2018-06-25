@@ -92,7 +92,7 @@ function InstallCppCheck ($cppcheck_version, $cppcheck_root)
 
 function InstallCppCheckMSI ($msipath, $install_log)
 {
-    $install_args = "/qn /norestart"
+    $install_args = "/quiet /qn /norestart"
 
     RunCommand "schtasks" "/create /tn checkcpp_install /RL HIGHEST /tr `"msiexec.exe /i $msipath $install_args`" /sc once /st 23:59"
     RunCommand "sleep" "10"
