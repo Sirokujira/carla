@@ -60,13 +60,15 @@ function InstallCppCheck ($cppcheck_version, $cppcheck_root)
     $url = "$BASE_CPPCHECK_URL" + "/$cppcheck_version" + "/" + "$installer_filename"
     $filepath = Download $installer_filename $url
 
-    $installer_path = $cppcheck_root + "/" + $installer_filename
+    Write-Host $filepath
     $current_dir =  [System.IO.Directory]::GetCurrentDirectory()
-    Copy-Item $installer_path $current_dir
+    Write-Host $current_dir
+    $installer_path = $current_dir + "/" + $installer_filename
+    # Copy-Item $installer_path $current_dir
 
-    $installer_ext = [System.IO.Path]::GetExtension($installer_path)
-    Write-Host "Installing $installer_path"
-    $install_log = $cppcheck_root + "\install.log"
+    $installer_ext = [System.IO.Path]::GetExtension($filepath)
+    Write-Host "Installing $filepath"
+    $install_log = $current_dir + "\install.log"
     if ($installer_ext -eq '.msi')
     {
         InstallCppCheckMSI $installer_filename $install_log
@@ -112,8 +114,5 @@ function InstallCppCheckEXE ($exepath, $install_log)
     RunCommand "schtasks" "/delete /tn checkcpp_install /f"
 }
 
-function main ()
-{
-    InstallCppCheck $env:CPPCHECK_VERSION $env:CPPCHECK_ROOT
-}
+InstallCppCheck $env:CPPCHECK_VERSION $env:CPPCHECK_ROOT
 
