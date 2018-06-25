@@ -15,7 +15,8 @@ environment:
     SETUP_BAT_TOOLSET: msvc-14.1
     CPPCHECK_VERSION: 1.83
     # CPPCHECK_ROOT: "C:\\Program Files\\Cppcheck"
-    CPPCHECK_ROOT: "C:\\Program Files (x86)\\Cppcheck"
+    CPPCHECK_ROOT: "C:\Program Files\Cppcheck"
+    # CPPCHECK_ROOT: "C:\\Program Files (x86)\\Cppcheck"
     TEST1: Pylint
     TEST2: CppCheck
     TEST3: MkDocs
@@ -40,7 +41,8 @@ environment:
 install:
   - cmd: if [%TEST1%]==[Pylint] pip install -r PythonClient/requirements.txt
   - cmd: if [%TEST1%]==[Pylint] pip install pylint
-  - cmd: if [%TEST2%]==[CppCheck] powershell -NoProfile -ExecutionPolicy Unrestricted appveyor\install.ps1
+  # - cmd: if [%TEST2%]==[CppCheck] powershell -NoProfile -ExecutionPolicy Unrestricted appveyor\install.ps1
+  - ps : appveyor\install.ps1
   - cmd: if [%TEST3%]==[MkDocs] pip install mkdocs
   - cmd: if [%TEST4%]==[AwesomeBot] gem install awesome_bot
   - cmd: Setup.bat -j 8 --boost-toolset msvc-14.1
