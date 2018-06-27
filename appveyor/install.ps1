@@ -61,21 +61,26 @@ function InstallCppCheck ($cppcheck_version, $cppcheck_root)
     $filepath = Download $installer_filename $url
 
     Write-Host $filepath
-    $current_dir =  [System.IO.Directory]::GetCurrentDirectory()
-    Write-Host $current_dir
-    $installer_path = $current_dir + "/" + $installer_filename
+    # C:\Windows\system32
+    # $current_dir = [System.IO.Directory]::GetCurrentDirectory()
+    # Write-Host $current_dir
+    # $installer_path = $current_dir + "/" + $installer_filename
     # Copy-Item $installer_path $current_dir
+    $current_dir = [System.IO.Path]::GetDirectoryName($filepath)
+    Write-Host $current_dir
+    # $filename = [System.IO.Path]::GetFileName($filepath)
 
     $installer_ext = [System.IO.Path]::GetExtension($filepath)
     Write-Host "Installing $filepath"
     $install_log = $current_dir + "\install.log"
+    
     if ($installer_ext -eq '.msi')
     {
-        InstallCppCheckMSI $installer_filename $install_log
+        InstallCppCheckMSI $filepath $install_log
     }
     else
     {
-        InstallCppCheckEXE $installer_path $install_log
+        InstallCppCheckEXE $filepath $install_log
     }
 
     if (Test-Path $cppcheck_root) 
