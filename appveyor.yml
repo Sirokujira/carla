@@ -44,7 +44,7 @@ install:
   # - ps : appveyor\install.ps1
   - cmd: if [%TEST3%]==[MkDocs] pip install mkdocs
   - cmd: if [%TEST4%]==[AwesomeBot] gem install awesome_bot
-  - cmd: Setup.bat -j 8 --boost-toolset msvc-14.1
+  - cmd: Setup.bat -j 8 --boost-toolset %SETUP_BAT_TOOLSET%
   - cmd: cd Util
   - cmd: Protoc.bat
 
