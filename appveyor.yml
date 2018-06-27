@@ -17,7 +17,7 @@ environment:
     CPPCHECK_ROOT: "C:\\Program Files\\Cppcheck"
     # CPPCHECK_ROOT: "C:\\Program Files (x86)\\Cppcheck"
     TEST1: Pylint
-    TEST2: CppCheck
+    # TEST2: CppCheck
     TEST3: MkDocs
     # TEST4: AwesomeBot
 
