@@ -17,12 +17,21 @@ if not "%1"=="" (
         set BUILD_DIR=%2
         shift
     )
+    if "%1"=="--toolset" (
+        set B_TOOLSET=%2
+        shift
+    )
     shift
     goto :arg-parse
 )
 
 if [%BUILD_DIR%] == [] set BUILD_DIR=.
+if [%B_TOOLSET%] == [] set B_TOOLSET=msvc-14.1
 if [%NUMBER_OF_ASYNC_JOBS%] == [] set NUMBER_OF_ASYNC_JOBS=1
+
+if [%B_TOOLSET%] == [msvc-14.1] set CMAKE_MSVCVERSION=Visual Studio 15 2017 Win64
+if [%B_TOOLSET%] == [msvc-14.0] set CMAKE_MSVCVERSION=Visual Studio 14 2015 Win64
+if [%B_TOOLSET%] == [msvc-12.0] set CMAKE_MSVCVERSION=Visual Studio 12 2013 Win64
 
 set LOCAL_PATH=%~dp0
 set FILE_N=---%~n0%~x0:
@@ -62,7 +71,8 @@ cd %P_SRC_DIR%\cmake\build
 echo %FILE_N% Generating build...
 rem Appveyor Test NG(C/CXX Compiler no set)
 rem cmake -G "NMake Makefiles"^
-cmake -G "Visual Studio 15 2017 Win64"^
+rem cmake -G "Visual Studio 15 2017 Win64"^
+cmake -G "%CMAKE_MSVCVERSION%"^
 	-DCMAKE_BUILD_TYPE=Release^
 	-Dprotobuf_BUILD_TESTS=OFF^
 	-DCMAKE_CXX_FLAGS_RELEASE=/MD^

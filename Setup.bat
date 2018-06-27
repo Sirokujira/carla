@@ -45,6 +45,7 @@ echo.
 echo  Installing Protobuf...
 call %INSTALLERS_DIR%install_proto.bat ^
 	--build-dir %INSTALLATION_DIR% ^
+	--toolset %TOOLSET% ^
 	-j %NUMBER_OF_ASYNC_JOBS%
 
 if not defined install_proto (
