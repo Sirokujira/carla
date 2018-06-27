@@ -40,8 +40,8 @@ environment:
 install:
   - cmd: if [%TEST1%]==[Pylint] pip install -r PythonClient/requirements.txt
   - cmd: if [%TEST1%]==[Pylint] pip install pylint
-  # - cmd: if [%TEST2%]==[CppCheck] powershell -NoProfile -ExecutionPolicy Unrestricted appveyor\install.ps1
-  - ps : appveyor\install.ps1
+  - cmd: if [%TEST2%]==[CppCheck] powershell -NoProfile -ExecutionPolicy Unrestricted appveyor\install.ps1
+  # - ps : appveyor\install.ps1
   - cmd: if [%TEST3%]==[MkDocs] pip install mkdocs
   - cmd: if [%TEST4%]==[AwesomeBot] gem install awesome_bot
   - cmd: Setup.bat -j 8 --boost-toolset msvc-14.1
