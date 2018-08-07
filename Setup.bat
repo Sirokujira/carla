@@ -36,6 +36,15 @@ echo Asynchronous jobs:  %NUMBER_OF_ASYNC_JOBS%
 echo Boost toolset:      %TOOLSET%
 echo Install directory:  %INSTALLATION_DIR%
 
+set BOOST_BASENAME=boost-1.67.0
+set BOOST_INCLUDE_PATH=%INSTALLATION_DIR%/%BOOST_BASENAME%-install/include
+set BOOST_LIB_PATH=%INSTALLATION_DIR%/%BOOST_BASENAME%-install/lib
+
+rem set BOOST_INCLUDE %INSTALLATION_DIR%/include
+rem set(BOOST_INCLUDE_PATH "${BOOST_INCLUDE}")
+rem set BOOST_LIBPATH %INSTALLATION_DIR%/lib
+rem set(BOOST_LIB_PATH "${BOOST_LIBPATH}")
+
 if not exist "%CONTENT_DIR%" (
 	echo Creating %CONTENT_DIR% folder...
 	mkdir %CONTENT_DIR%
