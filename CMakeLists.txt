@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.9.0)
 
 project(CARLA)
 
+if (WIN32)
+else (WIN32)
 include("Build/CMakeLists.txt.in")
+endif (WIN32)
 
 add_subdirectory("LibCarla/cmake")
 
