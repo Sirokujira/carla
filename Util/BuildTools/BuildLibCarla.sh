@@ -79,10 +79,10 @@ if ${BUILD_SERVER} ; then
 
     cmake \
         -G "Ninja" \
-        -DCMAKE_BUILD_TYPE=Server \
         -DCMAKE_TOOLCHAIN_FILE=${LIBCPP_TOOLCHAIN_FILE} \
         -DCMAKE_INSTALL_PREFIX=${LIBCARLA_INSTALL_SERVER_FOLDER} \
         -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+        -DBUILD_TYPE:STRING="Server" \
         ${CARLA_ROOT_FOLDER}
 
   fi
@@ -110,10 +110,10 @@ if ${BUILD_CLIENT} ; then
 
     cmake \
         -G "Ninja" \
-        -DCMAKE_BUILD_TYPE=Client \
         -DCMAKE_TOOLCHAIN_FILE=${LIBSTDCPP_TOOLCHAIN_FILE} \
         -DCMAKE_INSTALL_PREFIX=${LIBCARLA_INSTALL_CLIENT_FOLDER} \
         -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+        -DBUILD_TYPE:STRING="Client" \
         ${CARLA_ROOT_FOLDER}
 
   fi

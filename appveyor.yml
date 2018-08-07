@@ -59,6 +59,10 @@ build_script:
   - cmd: if [%TEST4%]==[AwesomeBot] find . -name '*.md' | xargs awesome_bot --allow-dupe --allow-redirect --skip-save-results
   - cmd: mkdir build
   - cmd: cd build
-  - cmd: cmake -G"%CMAKE_GENERATOR%" ..
+  - cmd: cmake -G"%CMAKE_GENERATOR%" -DBUILD_TYPE:STRING="Client" ..
   - cmd: cmake --build . --config %CONFIGURATION% --target install
-
+  - cmd: cd ..
+  - cmd: mkdir build2
+  - cmd: cd build2
+  - cmd: cmake -G"%CMAKE_GENERATOR%" -DBUILD_TYPE:STRING="Server" ..
+  - cmd: cmake --build . --config %CONFIGURATION% --target install
