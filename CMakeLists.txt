@@ -1,6 +1,10 @@
-cmake_minimum_required(VERSION 2.8.6)
+cmake_minimum_required(VERSION 3.9.0)
 
-project(Carla)
+project(CARLA)
+
+include("Build/CMakeLists.txt.in")
+
+add_subdirectory("LibCarla/cmake")
 
 # set(CMAKE_VERBOSE_MAKEFILE 1)  # debug helper
 
