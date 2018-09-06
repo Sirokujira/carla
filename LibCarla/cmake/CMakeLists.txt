@@ -13,7 +13,10 @@ if (BUILD_TYPE STREQUAL "Client")
   add_subdirectory("client")
 elseif (BUILD_TYPE STREQUAL "Server")
   add_subdirectory("server")
-  add_subdirectory("test")
+
+  if (NOT WIN32) # TODO(Andrei): Fix compilation for Windows
+    add_subdirectory("test")
+  endif()
 else ()
   message(FATAL_ERROR "Unknown build type '${BUILD_TYPE}'")
 endif ()
