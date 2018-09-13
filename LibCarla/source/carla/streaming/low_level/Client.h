@@ -28,25 +28,35 @@ namespace low_level {
   public:
 
     using underlying_client = detail::HashableClient<T>;
-
+    using protocol_type = typename underlying_client::protocol_type;
     using token_type = carla::streaming::detail::token_type;
+
+    explicit Client(boost::asio::ip::address fallback_address)
+      : _fallback_address(std::move(fallback_address)) {}
+
+    explicit Client(const std::string &fallback_address)
+      : Client(carla::streaming::make_address(fallback_address)) {}
+
+    explicit Client()
+      : Client(carla::streaming::make_localhost_address()) {}
 
     template <typename Functor>
     void Subscribe(
         boost::asio::io_service &io_service,
-        const token_type &token,
+        token_type token,
         Functor &&callback) {
-      if (!token.protocol_is_tcp()) { /// @todo
-        throw std::invalid_argument("invalid token, only TCP tokens supported");
+      if (!token.has_address()) {
+        token.set_address(_fallback_address);
       }
       _clients.emplace(
           io_service,
-          token.to_tcp_endpoint(),
-          token.get_stream_id(),
+          token,
           std::forward<Functor>(callback));
     }
 
   private:
+
+    boost::asio::ip::address _fallback_address;
 
     std::unordered_set<underlying_client> _clients;
   };
