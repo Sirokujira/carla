@@ -6,12 +6,10 @@
 
 #pragma once
 
+#include "carla/Buffer.h"
 #include "carla/Debug.h"
-#include "carla/streaming/Message.h"
 #include "carla/streaming/Token.h"
 #include "carla/streaming/detail/StreamState.h"
-
-#include <boost/asio/buffer.hpp>
 
 #include <memory>
 
@@ -24,6 +22,10 @@ namespace detail {
 
 } // namespace detail
 
+  /// A stream represents an unidirectional channel for sending data from server
+  /// to client. A (single) client can subscribe to this stream using the stream
+  /// token. If no client is subscribed, the data flushed down the stream is
+  /// discarded.
   class Stream {
   public:
 
@@ -35,18 +37,34 @@ namespace detail {
     Stream &operator=(const Stream &) = default;
     Stream &operator=(Stream &&) = default;
 
+    /// Token associated with this stream. This token can be used by a client to
+    /// subscribe to this stream.
     Token token() const {
       return _shared_state->token();
     }
 
-    template <typename ConstBufferSequence>
-    void Write(ConstBufferSequence buffer) {
-      _shared_state->Write(std::make_shared<Message>(buffer));
+    /// Pull a buffer from the buffer pool associated to this stream. Discarded
+    /// buffers are re-used to avoid memory allocations.
+    ///
+    /// @note Re-using buffers is optimized for the use case in which all the
+    /// messages sent through the stream are big and have (approximately) the
+    /// same size.
+    Buffer MakeBuffer() {
+      return _shared_state->MakeBuffer();
     }
 
+    /// Flush @a buffers down the stream. No copies are made.
+    template <typename... Buffers>
+    void Write(Buffers... buffers) {
+      _shared_state->Write(std::move(buffers)...);
+    }
+
+    /// Make a copy of @a data and flush it down the stream.
     template <typename T>
-    Stream &operator<<(const T &rhs) {
-      Write(boost::asio::buffer(rhs));
+    Stream &operator<<(const T &data) {
+      auto buffer = MakeBuffer();
+      buffer.copy_from(data);
+      Write(std::move(buffer));
       return *this;
     }
 

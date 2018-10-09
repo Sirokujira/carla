@@ -15,7 +15,7 @@
 #include <atomic>
 
 TEST(streaming_low_level, sending_strings) {
-  using namespace util::message;
+  using namespace util::buffer;
   using namespace carla::streaming;
   using namespace carla::streaming::detail;
   using namespace carla::streaming::low_level;
@@ -35,9 +35,8 @@ TEST(streaming_low_level, sending_strings) {
   Client<tcp::Client> c;
   c.Subscribe(io_service, stream.token(), [&](auto message) {
     ++message_count;
-    ASSERT_NE(message, nullptr);
-    ASSERT_EQ(message->size(), message_text.size());
-    const std::string msg = as_string(*message);
+    ASSERT_EQ(message.size(), message_text.size());
+    const std::string msg = as_string(message);
     ASSERT_EQ(msg, message_text);
   });
 

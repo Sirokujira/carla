@@ -13,8 +13,7 @@
 
 #include <atomic>
 
-TEST(streaming_detail_tcp, small_message) {
-  using namespace util::message;
+TEST(streaming_low_level_tcp, small_message) {
   using namespace carla::streaming;
   using namespace carla::streaming::detail;
 
@@ -26,12 +25,12 @@ TEST(streaming_detail_tcp, small_message) {
   std::atomic_bool done{false};
   std::atomic_size_t message_count{0u};
 
+  const std::string msg = "Hola!";
+
   srv.Listen([&](std::shared_ptr<tcp::ServerSession> session) {
     ASSERT_EQ(session->get_stream_id(), 1u);
-    const std::string msg = "Hola!";
-    auto message = std::make_shared<Message>(boost::asio::buffer(msg));
     while (!done) {
-      session->Write(message);
+      session->Write(carla::Buffer(msg));
       std::this_thread::sleep_for(1ns);
     }
     std::cout << "done!\n";
@@ -39,12 +38,12 @@ TEST(streaming_detail_tcp, small_message) {
 
   Dispatcher dispatcher{make_endpoint<tcp::Client::protocol_type>(ep)};
   auto stream = dispatcher.MakeStream();
-  tcp::Client c(io_service, stream.token(), [&](std::shared_ptr<Message> message) {
+  tcp::Client c(io_service, stream.token(), [&](carla::Buffer message) {
     ++message_count;
-    ASSERT_NE(message, nullptr);
-    ASSERT_EQ(message->size(), 5u);
-    const std::string msg = as_string(*message);
-    ASSERT_EQ(msg, std::string("Hola!"));
+    ASSERT_FALSE(message.empty());
+    ASSERT_EQ(message.size(), 5u);
+    const std::string received = util::buffer::as_string(message);
+    ASSERT_EQ(received, msg);
   });
 
   // We need at least two threads because this server loop consumes one.

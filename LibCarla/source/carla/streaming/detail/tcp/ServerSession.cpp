@@ -61,13 +61,22 @@ namespace tcp {
     });
   }
 
+  void ServerSession::Close() {
+    _strand.post([this, self = shared_from_this()]() {
+      if (_socket.is_open()) {
+        _socket.close();
+      }
+      log_debug("session", _session_id, "closed");
+    });
+  }
+
   void ServerSession::Write(std::shared_ptr<const Message> message) {
+    DEBUG_ASSERT(message != nullptr);
+    DEBUG_ASSERT(!message->empty());
     auto self = shared_from_this();
     _strand.post([=]() {
-
-      /// @todo has to be a better way of doing this...
       if (_is_writing) {
-        // Repost and return;
+        // Re-post and return;
         Write(std::move(message));
         return;
       }
@@ -88,17 +97,8 @@ namespace tcp {
       _deadline.expires_from_now(_timeout);
       boost::asio::async_write(
           _socket,
-          message->encode(),
+          message->GetBufferSequence(),
           _strand.wrap(handle_sent));
-    });
-  }
-
-  void ServerSession::Close() {
-    _strand.post([this, self = shared_from_this()]() {
-      if (_socket.is_open()) {
-        _socket.close();
-      }
-      log_debug("session", _session_id, "closed");
     });
   }
 

@@ -4,24 +4,23 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#pragma once
+#include "carla/streaming/detail/StreamState.h"
 
-#include "carla/Buffer.h"
-
-#include <cstdint>
-#include <type_traits>
+#include "carla/BufferPool.h"
 
 namespace carla {
 namespace streaming {
 namespace detail {
 
-  using stream_id_type = uint32_t;
+  StreamState::StreamState(const token_type &token)
+    : _token(token),
+      _buffer_pool(std::make_shared<BufferPool>()) {}
 
-  using message_size_type = uint32_t;
+  StreamState::~StreamState() = default;
 
-  static_assert(
-      std::is_same<message_size_type, Buffer::size_type>::value,
-      "uint type mismatch!");
+  Buffer StreamState::MakeBuffer() {
+    return _buffer_pool->Pop();
+  }
 
 } // namespace detail
 } // namespace streaming

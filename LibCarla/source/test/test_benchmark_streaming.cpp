@@ -13,7 +13,7 @@ using namespace carla::streaming;
 
 static auto make_special_message(size_t size) {
   std::vector<uint32_t> v(size/sizeof(uint32_t), 42u);
-  Message msg(boost::asio::buffer(v));
+  carla::Buffer msg(v);
   EXPECT_EQ(msg.size(), size);
   return msg;
 }
@@ -31,9 +31,9 @@ public:
   void AddStream() {
     Stream stream = _server.MakeStream();
 
-    _client.Subscribe(stream.token(), [this](std::shared_ptr<Message> DEBUG_ONLY(msg)) {
-      DEBUG_ASSERT_EQ(msg->size(), _message.size());
-      DEBUG_ASSERT(*msg == _message);
+    _client.Subscribe(stream.token(), [this](carla::Buffer DEBUG_ONLY(msg)) {
+      DEBUG_ASSERT_EQ(msg.size(), _message.size());
+      DEBUG_ASSERT(msg == _message);
       _client_callback.post([this]() {
         CARLA_PROFILE_FPS(client, listen_callback);
         ++_number_of_messages_received;
@@ -60,25 +60,32 @@ public:
     for (auto &&stream : _streams) {
       _threads.CreateThread([=]() mutable {
         for (auto i = 0u; i < number_of_messages; ++i) {
-          CARLA_PROFILE_SCOPE(game, write_to_stream);
-          stream << _message.buffer();
+          std::this_thread::sleep_for(8ms); // 120FPS.
+          {
+            CARLA_PROFILE_SCOPE(game, write_to_stream);
+            stream << _message.buffer();
+          }
         }
       });
     }
 
+    const auto expected_number_of_messages = _streams.size() * number_of_messages;
     for (auto i = 0u; i < 30; ++i) {
-      if (_number_of_messages_received >= (_streams.size() * number_of_messages)) {
+      std::cout << "received " << _number_of_messages_received
+                << " of " << expected_number_of_messages
+                << " messages,";
+      if (_number_of_messages_received >= expected_number_of_messages) {
         break;
       }
-      std::cout << "received only " << _number_of_messages_received
-                << " messages, waiting..." << std::endl;
+      std::cout << " waiting..." << std::endl;
       std::this_thread::sleep_for(1s);
     }
 
     _client_callback.stop();
     _threads.JoinAll();
 
-    std::cout << _number_of_messages_received << " messages received; done.\n";
+    ASSERT_EQ(_number_of_messages_received, expected_number_of_messages);
+    std::cout << " done." << std::endl;
 
     _client.Stop();
     _server.Stop();
@@ -92,7 +99,7 @@ private:
 
   Client _client;
 
-  const Message _message;
+  const carla::Buffer _message;
 
   boost::asio::io_service _client_callback;
 

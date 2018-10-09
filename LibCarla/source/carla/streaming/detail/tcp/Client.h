@@ -6,8 +6,8 @@
 
 #pragma once
 
+#include "carla/Buffer.h"
 #include "carla/NonCopyable.h"
-#include "carla/streaming/Message.h"
 #include "carla/streaming/detail/Token.h"
 #include "carla/streaming/detail/Types.h"
 
@@ -20,6 +20,9 @@
 #include <memory>
 
 namespace carla {
+
+  class BufferPool;
+
 namespace streaming {
 namespace detail {
 namespace tcp {
@@ -33,7 +36,7 @@ namespace tcp {
 
     using endpoint = boost::asio::ip::tcp::endpoint;
     using protocol_type = endpoint::protocol_type;
-    using callback_function_type = std::function<void (std::shared_ptr<Message>)>;
+    using callback_function_type = std::function<void (Buffer)>;
 
     Client(
         boost::asio::io_service &io_service,
@@ -65,6 +68,8 @@ namespace tcp {
     boost::asio::io_service::strand _strand;
 
     boost::asio::deadline_timer _connection_timer;
+
+    std::shared_ptr<BufferPool> _buffer_pool;
 
     bool _done = false;
   };
