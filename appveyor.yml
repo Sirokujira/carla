@@ -166,7 +166,7 @@ install:
 build_script:
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
   - cmd: pushd PythonClient
-  # - cmd: if [%TEST1%]==[Pylint] forfiles /s /m *.py /c "cmd /c pylint --disable=R,C --rcfile=.pylintrc @path"
+  - cmd: if [%TEST1%]==[Pylint] forfiles /s /m *.py /c "cmd /c pylint --disable=R,C --rcfile=.pylintrc @path"
   - cmd: popd
   - cmd: if [%TEST2%]==[CppCheck] "%CPPCHECK_ROOT%\cppcheck.exe" . -iBuild -i.pb.cc --error-exitcode=1 --enable=warning --inline-suppr --quiet
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
