@@ -77,7 +77,7 @@ environment:
     # TEST3: MkDocs
     # TEST4: AwesomeBot
 
-- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     # PYTHON: "C:\\Miniconda36-x64"
     # PYTHON_VERSION: "3.6"
     # PYTHON_ARCH: "64"
