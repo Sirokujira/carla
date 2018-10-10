@@ -1,8 +1,11 @@
-version: 0.8.4.{build}
+version: 0.9.0.{build}
 
 branches:
   only:
     - master
+
+cache:
+  - C:\Tools\ninja\ninja.exe
 
 environment:
   matrix:
@@ -12,6 +15,25 @@ environment:
     # PYTHON_ARCH: "64"
     CMAKE_GENERATOR: Visual Studio 15 2017 Win64
     CONFIGURATION: Release
+    # vars.mk
+    # start
+    CARLA_BUILD_FOLDER: %APPVEYOR_BUILD_FOLDER%/Build
+    CARLA_DIST_FOLDER: %APPVEYOR_BUILD_FOLDER%/Dist
+    CARLA_BUILD_TOOLS_FOLDER: %APPVEYOR_BUILD_FOLDER%/Util/BuildTools
+    CARLA_TEST_RESULTS_FOLDER: %CARLA_BUILD_FOLDER%/test-results
+    CARLAUE4_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/Unreal/CarlaUE4
+    CARLAUE4_PLUGIN_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/Unreal/CarlaUE4/Plugins/Carla
+    CARLA_PYTHONAPI_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/PythonAPI
+    LIBCARLA_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/LibCarla
+    LIBCARLA_BUILD_SERVER_FOLDER: %CARLA_BUILD_FOLDER%/libcarla-server-build
+    LIBCARLA_BUILD_CLIENT_FOLDER: %CARLA_BUILD_FOLDER%/libcarla-client-build
+    LIBCARLA_INSTALL_SERVER_FOLDER: %CARLAUE4_PLUGIN_ROOT_FOLDER%/CarlaDependencies
+    LIBCARLA_INSTALL_CLIENT_FOLDER: %CARLA_PYTHONAPI_ROOT_FOLDER%/dependencies
+    CARLAUE4_PLUGIN_DEPS_FOLDER: %CARLAUE4_PLUGIN_ROOT_FOLDER%/CarlaDependencies
+    LIBSTDCPP_TOOLCHAIN_FILE: %CARLA_BUILD_FOLDER%/LibStdCppToolChain.cmake
+    LIBCPP_TOOLCHAIN_FILE: %CARLA_BUILD_FOLDER%/LibCppToolChain.cmake
+    CMAKE_CONFIG_FILE: %CARLA_BUILD_FOLDER%/CMakeLists.txt.in
+    # end
     SETUP_BAT_TOOLSET: msvc-14.1
     CPPCHECK_VERSION: 1.83
     CPPCHECK_ROOT: "C:\\Program Files\\Cppcheck"
@@ -27,6 +49,26 @@ environment:
     # PYTHON_ARCH: "64"
     CMAKE_GENERATOR: Visual Studio 14 2015 Win64
     CONFIGURATION: Release
+    # vars.mk
+    # start
+    CARLA_BUILD_FOLDER: %APPVEYOR_BUILD_FOLDER%/Build
+    CARLA_DIST_FOLDER: %APPVEYOR_BUILD_FOLDER%/Dist
+    CARLA_BUILD_TOOLS_FOLDER: %APPVEYOR_BUILD_FOLDER%/Util/BuildTools
+    CARLA_TEST_RESULTS_FOLDER: %CARLA_BUILD_FOLDER%/test-results
+    CARLAUE4_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/Unreal/CarlaUE4
+    CARLAUE4_PLUGIN_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/Unreal/CarlaUE4/Plugins/Carla
+    CARLA_PYTHONAPI_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/PythonAPI
+    LIBCARLA_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/LibCarla
+    LIBCARLA_BUILD_SERVER_FOLDER: %CARLA_BUILD_FOLDER%/libcarla-server-build
+    LIBCARLA_BUILD_CLIENT_FOLDER: %CARLA_BUILD_FOLDER%/libcarla-client-build
+    LIBCARLA_INSTALL_SERVER_FOLDER: %CARLAUE4_PLUGIN_ROOT_FOLDER%/CarlaDependencies
+    LIBCARLA_INSTALL_CLIENT_FOLDER: %CARLA_PYTHONAPI_ROOT_FOLDER%/dependencies
+    CARLAUE4_PLUGIN_DEPS_FOLDER: %CARLAUE4_PLUGIN_ROOT_FOLDER%/CarlaDependencies
+    LIBSTDCPP_TOOLCHAIN_FILE: %CARLA_BUILD_FOLDER%/LibStdCppToolChain.cmake
+    LIBCPP_TOOLCHAIN_FILE: %CARLA_BUILD_FOLDER%/LibCppToolChain.cmake
+    CMAKE_CONFIG_FILE: %CARLA_BUILD_FOLDER%/CMakeLists.txt.in
+    # end
+    CARLA_BUILD_TOOLS_FOLDER: %APPVEYOR_BUILD_FOLDER%\Util\BuildTools
     SETUP_BAT_TOOLSET: msvc-14.0
     CPPCHECK_VERSION: 1.83
     # CPPCHECK_ROOT: %APPVEYOR_BUILD_FOLDER%
@@ -36,8 +78,82 @@ environment:
     # TEST3: MkDocs
     # TEST4: AwesomeBot
 
+- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    # PYTHON: "C:\\Miniconda36-x64"
+    # PYTHON_VERSION: "3.6"
+    # PYTHON_ARCH: "64"
+    NINJA_DIR: C:\Tools\ninja
+    CMAKE_GENERATOR: Ninja
+    CONFIGURATION: Release
+    # vars.mk
+    # start
+    CARLA_BUILD_FOLDER: %APPVEYOR_BUILD_FOLDER%/Build
+    CARLA_DIST_FOLDER: %APPVEYOR_BUILD_FOLDER%/Dist
+    CARLA_BUILD_TOOLS_FOLDER: %APPVEYOR_BUILD_FOLDER%/Util/BuildTools
+    CARLA_TEST_RESULTS_FOLDER: %CARLA_BUILD_FOLDER%/test-results
+    CARLAUE4_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/Unreal/CarlaUE4
+    CARLAUE4_PLUGIN_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/Unreal/CarlaUE4/Plugins/Carla
+    CARLA_PYTHONAPI_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/PythonAPI
+    LIBCARLA_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/LibCarla
+    LIBCARLA_BUILD_SERVER_FOLDER: %CARLA_BUILD_FOLDER%/libcarla-server-build
+    LIBCARLA_BUILD_CLIENT_FOLDER: %CARLA_BUILD_FOLDER%/libcarla-client-build
+    LIBCARLA_INSTALL_SERVER_FOLDER: %CARLAUE4_PLUGIN_ROOT_FOLDER%/CarlaDependencies
+    LIBCARLA_INSTALL_CLIENT_FOLDER: %CARLA_PYTHONAPI_ROOT_FOLDER%/dependencies
+    CARLAUE4_PLUGIN_DEPS_FOLDER: %CARLAUE4_PLUGIN_ROOT_FOLDER%/CarlaDependencies
+    LIBSTDCPP_TOOLCHAIN_FILE: %CARLA_BUILD_FOLDER%/LibStdCppToolChain.cmake
+    LIBCPP_TOOLCHAIN_FILE: %CARLA_BUILD_FOLDER%/LibCppToolChain.cmake
+    CMAKE_CONFIG_FILE: %CARLA_BUILD_FOLDER%/CMakeLists.txt.in
+    # end
+    SETUP_BAT_TOOLSET: msvc-14.1
+    CPPCHECK_VERSION: 1.83
+    CPPCHECK_ROOT: "C:\\Program Files\\Cppcheck"
+    # CPPCHECK_ROOT: "C:\\Program Files (x86)\\Cppcheck"
+    TEST1: Pylint
+    # TEST2: CppCheck
+    # TEST3: MkDocs
+    # TEST4: AwesomeBot
+
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    # PYTHON: "C:\\Miniconda36-x64"
+    # PYTHON_VERSION: "3.6"
+    # PYTHON_ARCH: "64"
+    NINJA_DIR: C:\Tools\ninja
+    CMAKE_GENERATOR: Ninja
+    CONFIGURATION: Release
+    # vars.mk
+    # start
+    CARLA_BUILD_FOLDER: %APPVEYOR_BUILD_FOLDER%/Build
+    CARLA_DIST_FOLDER: %APPVEYOR_BUILD_FOLDER%/Dist
+    CARLA_BUILD_TOOLS_FOLDER: %APPVEYOR_BUILD_FOLDER%/Util/BuildTools
+    CARLA_TEST_RESULTS_FOLDER: %CARLA_BUILD_FOLDER%/test-results
+    CARLAUE4_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/Unreal/CarlaUE4
+    CARLAUE4_PLUGIN_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/Unreal/CarlaUE4/Plugins/Carla
+    CARLA_PYTHONAPI_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/PythonAPI
+    LIBCARLA_ROOT_FOLDER: %APPVEYOR_BUILD_FOLDER%/LibCarla
+    LIBCARLA_BUILD_SERVER_FOLDER: %CARLA_BUILD_FOLDER%/libcarla-server-build
+    LIBCARLA_BUILD_CLIENT_FOLDER: %CARLA_BUILD_FOLDER%/libcarla-client-build
+    LIBCARLA_INSTALL_SERVER_FOLDER: %CARLAUE4_PLUGIN_ROOT_FOLDER%/CarlaDependencies
+    LIBCARLA_INSTALL_CLIENT_FOLDER: %CARLA_PYTHONAPI_ROOT_FOLDER%/dependencies
+    CARLAUE4_PLUGIN_DEPS_FOLDER: %CARLAUE4_PLUGIN_ROOT_FOLDER%/CarlaDependencies
+    LIBSTDCPP_TOOLCHAIN_FILE: %CARLA_BUILD_FOLDER%/LibStdCppToolChain.cmake
+    LIBCPP_TOOLCHAIN_FILE: %CARLA_BUILD_FOLDER%/LibCppToolChain.cmake
+    CMAKE_CONFIG_FILE: %CARLA_BUILD_FOLDER%/CMakeLists.txt.in
+    # end
+    SETUP_BAT_TOOLSET: msvc-14.0
+    CPPCHECK_VERSION: 1.83
+    # CPPCHECK_ROOT: %APPVEYOR_BUILD_FOLDER%
+    CPPCHECK_ROOT: "C:\\Program Files\\Cppcheck"
+    TEST1: Pylint
+    TEST2: CppCheck
+    TEST3: MkDocs
+    # TEST4: AwesomeBot
 
 install:
+  - cmd: if not exist %NINJA_DIR%\ mkdir %NINJA_DIR%
+  - cmd: cd %NINJA_DIR%
+  - cmd: if not exist ninja.exe appveyor DownloadFile https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-win.zip
+  - cmd: if not exist ninja.exe 7z x ninja-win.zip
+  - cmd: set PATH=%NINJA_DIR%;%PATH%
   - cmd: if [%TEST1%]==[Pylint] pip install -r PythonClient/requirements.txt
   - cmd: if [%TEST1%]==[Pylint] pip install pylint
   - cmd: if [%TEST2%]==[CppCheck] powershell -NoProfile -ExecutionPolicy Unrestricted appveyor\install.ps1
@@ -50,19 +166,20 @@ install:
 
 build_script:
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
-  - cmd: cd PythonClient
-  - cmd: if [%TEST1%]==[Pylint] forfiles /s /m *.py /c "cmd /c pylint --disable=R,C --rcfile=.pylintrc @path"
-  - cmd: cd ..
+  - cmd: pushd PythonClient
+  # - cmd: if [%TEST1%]==[Pylint] forfiles /s /m *.py /c "cmd /c pylint --disable=R,C --rcfile=.pylintrc @path"
+  - cmd: popd
   - cmd: if [%TEST2%]==[CppCheck] "%CPPCHECK_ROOT%\cppcheck.exe" . -iBuild -i.pb.cc --error-exitcode=1 --enable=warning --inline-suppr --quiet
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
   - cmd: if [%TEST3%]==[MkDocs] mkdocs build --verbose --clean --strict --site-dir _site
   - cmd: if [%TEST4%]==[AwesomeBot] find . -name '*.md' | xargs awesome_bot --allow-dupe --allow-redirect --skip-save-results
   - cmd: mkdir build
-  - cmd: cd build
+  - cmd: pushd build
   - cmd: cmake -G"%CMAKE_GENERATOR%" -DBUILD_TYPE:STRING="Client" ..
   - cmd: cmake --build . --config %CONFIGURATION% --target install
-  - cmd: cd ..
+  - cmd: popd
   - cmd: mkdir build2
-  - cmd: cd build2
+  - cmd: pushd build2
   - cmd: cmake -G"%CMAKE_GENERATOR%" -DBUILD_TYPE:STRING="Server" ..
   - cmd: cmake --build . --config %CONFIGURATION% --target install
+  - cmd: popd
