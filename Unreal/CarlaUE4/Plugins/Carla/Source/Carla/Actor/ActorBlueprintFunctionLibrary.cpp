@@ -7,7 +7,8 @@
 #include "Carla.h"
 #include "Carla/Actor/ActorBlueprintFunctionLibrary.h"
 
-#include "Carla/Settings/PostProcessEffect.h"
+#include "Carla/Sensor/LidarDescription.h"
+#include "Carla/Sensor/SceneCaptureSensor.h"
 #include "Carla/Util/ScopedStack.h"
 
 #include <algorithm>
@@ -186,25 +187,66 @@ bool UActorBlueprintFunctionLibrary::CheckActorDefinitions(const TArray<FActorDe
 /// -- Helpers to create actor definitions -------------------------------------
 /// ============================================================================
 
+template <typename... TStrs>
+static void FillIdAndTags(FActorDefinition &Def, TStrs &&... Strings)
+{
+  Def.Id = JoinStrings(TEXT("."), std::forward<TStrs>(Strings)...).ToLower();
+  Def.Tags = JoinStrings(TEXT(","), std::forward<TStrs>(Strings)...).ToLower();
+  // each actor gets an actor role name attribute (empty by default)
+  FActorVariation ActorRole;
+  ActorRole.Id = TEXT("role_name");
+  ActorRole.Type = EActorAttributeType::String;
+  ActorRole.RecommendedValues = { TEXT("default") };
+  ActorRole.bRestrictToRecommended = false;
+  Def.Variations.Emplace(ActorRole);
+}
+
+static void AddRecommendedValuesForActorRoleName(FActorDefinition &Definition, TArray<FString> &&RecommendedValues)
+{
+  for (auto &&ActorVariation: Definition.Variations)
+  {
+    if ( ActorVariation.Id == "role_name"  )
+    {
+      ActorVariation.RecommendedValues = RecommendedValues;
+      return;
+    }
+  }
+}
+
+static void AddRecommendedValuesForSensorRoleNames(FActorDefinition &Definition)
+{
+  AddRecommendedValuesForActorRoleName(Definition, {TEXT("front"), TEXT("back"), TEXT("left"), TEXT("right"), TEXT("front_left"), TEXT("front_right"), TEXT("back_left"), TEXT("back_right")});
+}
+
+FActorDefinition UActorBlueprintFunctionLibrary::MakeGenericSensorDefinition(
+    const FString &Type,
+    const FString &Id)
+{
+  FActorDefinition Definition;
+  FillIdAndTags(Definition, TEXT("sensor"), Type, Id);
+  AddRecommendedValuesForSensorRoleNames(Definition);
+  return Definition;
+}
+
+FActorDefinition UActorBlueprintFunctionLibrary::MakeCameraDefinition(
+    const FString &Id,
+    const bool bEnableModifyingPostProcessEffects)
+{
+  FActorDefinition Definition;
+  bool Success;
+  MakeCameraDefinition(Id, bEnableModifyingPostProcessEffects, Success, Definition);
+  check(Success);
+  return Definition;
+}
+
 void UActorBlueprintFunctionLibrary::MakeCameraDefinition(
-    const FCameraParameters &Parameters,
+    const FString &Id,
+    const bool bEnableModifyingPostProcessEffects,
     bool &Success,
     FActorDefinition &Definition)
 {
-  Definition.Id = JoinStrings(TEXT("."), TEXT("sensor"), Parameters.Id).ToLower();
-  Definition.Class = Parameters.Class;
-  Definition.Tags = JoinStrings(TEXT(","), TEXT("sensor"), Parameters.Id).ToLower();
-  // Post-processing.
-  FActorVariation PostProcessing;
-  PostProcessing.Id = TEXT("post_processing");
-  PostProcessing.Type = EActorAttributeType::String;
-  for (uint8 i = 1u; i < PostProcessEffect::ToUInt(EPostProcessEffect::SIZE); ++i)
-  {
-    PostProcessing.RecommendedValues.Add(PostProcessEffect::ToString(i));
-  }
-  // By defaul goes to the first one, we don't want None as default.
-  PostProcessing.RecommendedValues.Add(PostProcessEffect::ToString(0u));
-  PostProcessing.bRestrictToRecommended = true;
+  FillIdAndTags(Definition, TEXT("sensor"), TEXT("camera"), Id);
+  AddRecommendedValuesForSensorRoleNames(Definition);
   // FOV.
   FActorVariation FOV;
   FOV.Id = TEXT("fov");
@@ -223,7 +265,71 @@ void UActorBlueprintFunctionLibrary::MakeCameraDefinition(
   ResY.RecommendedValues = { TEXT("600") };
   ResY.bRestrictToRecommended = false;
 
-  Definition.Variations = {PostProcessing, ResX, ResY, FOV};
+  Definition.Variations.Append({ResX, ResY, FOV});
+
+  if (bEnableModifyingPostProcessEffects)
+  {
+    FActorVariation PostProccess;
+    PostProccess.Id = TEXT("enable_postprocess_effects");
+    PostProccess.Type = EActorAttributeType::Bool;
+    PostProccess.RecommendedValues = { TEXT("true") };
+    PostProccess.bRestrictToRecommended = false;
+    Definition.Variations.Add(PostProccess);
+  }
+
+  Success = CheckActorDefinition(Definition);
+}
+
+FActorDefinition UActorBlueprintFunctionLibrary::MakeLidarDefinition(
+    const FString &Id)
+{
+  FActorDefinition Definition;
+  bool Success;
+  MakeLidarDefinition(Id, Success, Definition);
+  check(Success);
+  return Definition;
+}
+
+void UActorBlueprintFunctionLibrary::MakeLidarDefinition(
+    const FString &Id,
+    bool &Success,
+    FActorDefinition &Definition)
+{
+  FillIdAndTags(Definition, TEXT("sensor"), TEXT("lidar"), Id);
+  AddRecommendedValuesForSensorRoleNames(Definition);
+  // Number of channels.
+  FActorVariation Channels;
+  Channels.Id = TEXT("channels");
+  Channels.Type = EActorAttributeType::Int;
+  Channels.RecommendedValues = { TEXT("32") };
+  // Range.
+  FActorVariation Range;
+  Range.Id = TEXT("range");
+  Range.Type = EActorAttributeType::Float;
+  Range.RecommendedValues = { TEXT("5000.0") };
+  // Points per second.
+  FActorVariation PointsPerSecond;
+  PointsPerSecond.Id = TEXT("points_per_second");
+  PointsPerSecond.Type = EActorAttributeType::Int;
+  PointsPerSecond.RecommendedValues = { TEXT("56000") };
+  // Frequency.
+  FActorVariation Frequency;
+  Frequency.Id = TEXT("rotation_frequency");
+  Frequency.Type = EActorAttributeType::Float;
+  Frequency.RecommendedValues = { TEXT("10.0") };
+  // Upper FOV limit.
+  FActorVariation UpperFOV;
+  UpperFOV.Id = TEXT("upper_fov");
+  UpperFOV.Type = EActorAttributeType::Float;
+  UpperFOV.RecommendedValues = { TEXT("10.0") };
+  // Lower FOV limit.
+  FActorVariation LowerFOV;
+  LowerFOV.Id = TEXT("lower_fov");
+  LowerFOV.Type = EActorAttributeType::Float;
+  LowerFOV.RecommendedValues = { TEXT("-30.0") };
+
+  Definition.Variations.Append({Channels, Range, PointsPerSecond, Frequency, UpperFOV, LowerFOV});
+
   Success = CheckActorDefinition(Definition);
 }
 
@@ -233,23 +339,31 @@ void UActorBlueprintFunctionLibrary::MakeVehicleDefinition(
     FActorDefinition &Definition)
 {
   /// @todo We need to validate here the params.
-  Definition.Id = JoinStrings(TEXT("."), Parameters.Make, Parameters.Model).ToLower();
+  FillIdAndTags(Definition, TEXT("vehicle"), Parameters.Make, Parameters.Model);
+  AddRecommendedValuesForActorRoleName(Definition, {TEXT("autopilot"), TEXT("scenario"), TEXT("ego_vehicle")});
   Definition.Class = Parameters.Class;
-  Definition.Tags = JoinStrings(TEXT(","), TEXT("vehicle"), Parameters.Make, Parameters.Model).ToLower();
-  FActorVariation Colors;
-  Colors.Id = TEXT("color");
-  Colors.Type = EActorAttributeType::RGBColor;
-  Colors.bRestrictToRecommended = false;
-  for (auto &Color : Parameters.RecommendedColors)
+  if (Parameters.RecommendedColors.Num() > 0)
   {
-    Colors.RecommendedValues.Emplace(ColorToFString(Color));
+    FActorVariation Colors;
+    Colors.Id = TEXT("color");
+    Colors.Type = EActorAttributeType::RGBColor;
+    Colors.bRestrictToRecommended = false;
+    for (auto &Color : Parameters.RecommendedColors)
+    {
+      Colors.RecommendedValues.Emplace(ColorToFString(Color));
+    }
+    Definition.Variations.Emplace(Colors);
   }
-  Definition.Variations.Emplace(Colors);
+
   Definition.Attributes.Emplace(FActorAttribute{
-    TEXT("number_of_wheels"),
-    EActorAttributeType::Int,
-    FString::FromInt(Parameters.NumberOfWheels)
-  });
+    TEXT("object_type"),
+    EActorAttributeType::String,
+    Parameters.ObjectType});
+
+  Definition.Attributes.Emplace(FActorAttribute{
+      TEXT("number_of_wheels"),
+      EActorAttributeType::Int,
+      FString::FromInt(Parameters.NumberOfWheels)});
   Success = CheckActorDefinition(Definition);
 }
 
@@ -413,3 +527,60 @@ FColor UActorBlueprintFunctionLibrary::RetrieveActorAttributeToColor(
       ActorAttributeToColor(Attributes[Id], Default) :
       Default;
 }
+
+/// ============================================================================
+/// -- Helpers to set Actors ---------------------------------------------------
+/// ============================================================================
+
+// Here we do different checks when we are in editor, because we don't want the
+// editor crashing while people is testing new actor definitions.
+#if WITH_EDITOR
+#  define CARLA_ABFL_CHECK_ACTOR(ActorPtr) \
+        if ((ActorPtr == nullptr) || ActorPtr->IsPendingKill()) \
+        { \
+          UE_LOG(LogCarla, Error, TEXT("Cannot set empty actor!")); \
+          return; \
+        }
+#else
+#  define CARLA_ABFL_CHECK_ACTOR(ActorPtr) \
+        check((ActorPtr != nullptr) && !ActorPtr->IsPendingKill());
+#endif // WITH_EDITOR
+
+void UActorBlueprintFunctionLibrary::SetCamera(
+    const FActorDescription &Description,
+    ASceneCaptureSensor *Camera)
+{
+  CARLA_ABFL_CHECK_ACTOR(Camera);
+  Camera->SetImageSize(
+      RetrieveActorAttributeToInt("image_size_x", Description.Variations, 800),
+      RetrieveActorAttributeToInt("image_size_y", Description.Variations, 600));
+  Camera->SetFOVAngle(
+      RetrieveActorAttributeToFloat("fov", Description.Variations, 90.0f));
+  if (Description.Variations.Contains("enable_postprocess_effects"))
+  {
+    Camera->EnablePostProcessingEffects(
+        ActorAttributeToBool(
+            Description.Variations["enable_postprocess_effects"],
+            true));
+  }
+}
+
+void UActorBlueprintFunctionLibrary::SetLidar(
+    const FActorDescription &Description,
+    FLidarDescription &Lidar)
+{
+  Lidar.Channels =
+      RetrieveActorAttributeToInt("channels", Description.Variations, Lidar.Channels);
+  Lidar.Range =
+      RetrieveActorAttributeToFloat("range", Description.Variations, Lidar.Range);
+  Lidar.PointsPerSecond =
+      RetrieveActorAttributeToInt("points_per_second", Description.Variations, Lidar.PointsPerSecond);
+  Lidar.RotationFrequency =
+      RetrieveActorAttributeToFloat("rotation_frequency", Description.Variations, Lidar.RotationFrequency);
+  Lidar.UpperFovLimit =
+      RetrieveActorAttributeToFloat("upper_fov", Description.Variations, Lidar.UpperFovLimit);
+  Lidar.LowerFovLimit =
+      RetrieveActorAttributeToFloat("lower_fov", Description.Variations, Lidar.LowerFovLimit);
+}
+
+#undef CARLA_ABFL_CHECK_ACTOR

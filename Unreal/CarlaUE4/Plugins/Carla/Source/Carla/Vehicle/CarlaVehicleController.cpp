@@ -7,9 +7,6 @@
 #include "Carla.h"
 #include "CarlaVehicleController.h"
 
-#include "Sensor/Lidar.h"
-#include "Sensor/SceneCaptureCamera.h"
-
 #include "Components/BoxComponent.h"
 #include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
@@ -110,7 +107,6 @@ void ACarlaVehicleController::IntersectPlayerWithRoadMap()
 {
   auto CurrentRoadMap = GetRoadMap();
   if (CurrentRoadMap == nullptr) {
-    UE_LOG(LogCarla, Error, TEXT("Controller doesn't have a road map!"));
     return;
   }
 

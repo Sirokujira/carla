@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Carla/Actor/ActorDescription.h"
+#include "Carla/Game/Tagger.h"
 
 class AActor;
 
@@ -16,6 +17,12 @@ class FActorView
 public:
 
   using IdType = uint32;
+
+  enum class ActorType : uint8 {
+    Other,
+    Vehicle,
+    TrafficLight
+  };
 
   FActorView() = default;
   FActorView(const FActorView &) = default;
@@ -28,6 +35,11 @@ public:
   IdType GetActorId() const
   {
     return Id;
+  }
+
+  ActorType GetActorType() const
+  {
+    return Type;
   }
 
   AActor *GetActor()
@@ -45,6 +57,11 @@ public:
     return Description.Get();
   }
 
+  const TSet<ECityObjectLabel> &GetSemanticTags() const
+  {
+    return SemanticTags;
+  }
+
 private:
 
   friend class FActorRegistry;
@@ -52,13 +69,15 @@ private:
   FActorView(IdType ActorId, AActor &Actor, FActorDescription Description)
     : Id(ActorId),
       TheActor(&Actor),
-      Description(MakeShared<FActorDescription>(std::move(Description))) {
-    check(Id != 0u);
-  }
+      Description(MakeShared<FActorDescription>(std::move(Description))) {}
 
   IdType Id = 0u;
+
+  ActorType Type = ActorType::Other;
 
   AActor *TheActor = nullptr;
 
   TSharedPtr<const FActorDescription> Description = nullptr;
+
+  TSet<ECityObjectLabel> SemanticTags;
 };
